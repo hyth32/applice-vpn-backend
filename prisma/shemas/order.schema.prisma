@@ -1,0 +1,17 @@
+model Order {
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
+  region    Region    @relation(fields: [regionId], references: [id])
+  regionId  Int
+  period    Period    @relation(fields: [periodId], references: [id])
+  periodId  Int
+  amount    String
+  currency  String    @default("RUB")
+  test      Boolean   @default(false)
+  paid      Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  keys      Key[]
+  payments  Payment[]
+}

@@ -1,0 +1,11 @@
+model Price {
+  id        Int      @id @default(autoincrement())
+  region    Region   @relation(fields: [regionId], references: [id])
+  regionId  Int
+  period    Period   @relation(fields: [periodId], references: [id])
+  periodId  Int
+  keyCount  Int
+  amount    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

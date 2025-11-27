@@ -1,0 +1,11 @@
+model Period {
+  id        Int      @id @default(autoincrement())
+  name      String
+  value     Int
+  discount  Float?
+  prices    Price[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  keys      Key[]
+  orders    Order[]
+}

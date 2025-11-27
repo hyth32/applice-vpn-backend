@@ -1,0 +1,18 @@
+model Key {
+  id             Int       @id @default(autoincrement())
+  user           User      @relation(fields: [userId], references: [id])
+  userId         Int
+  order          Order     @relation(fields: [orderId], references: [id])
+  orderId        Int
+  free           Boolean?
+  region         Region    @relation(fields: [regionId], references: [id])
+  regionId       Int
+  period         Period    @relation(fields: [periodId], references: [id])
+  periodId       Int
+  configId       String
+  configName     String
+  expirationDate DateTime
+  deletedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
