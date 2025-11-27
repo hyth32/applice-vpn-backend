@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 
-export const orderExtension = (client: PrismaClient) => ({
+export const keyExtension = (client: PrismaClient) => ({
   model: {
-    order: {
+    key: {
       async softDelete(where: { id: number }) {
-        return client.order.update({
+        return client.key.update({
           where,
           data: { deletedAt: new Date() },
         })
