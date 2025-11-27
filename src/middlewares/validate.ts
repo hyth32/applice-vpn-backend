@@ -10,7 +10,7 @@ export const validate =
 
     if (!result.success) {
       const messages = result.error.issues.map((err) => err.message)
-      res.status(400).json({ error: messages.join(', ') })
+      res.status(400).json({ success: false, message: messages.join(', ') })
       return
     }
 
