@@ -10,14 +10,8 @@ export class UserController {
     try {
       const { user, created } = await userService.create(req.body)
       const statusCode = created ? 201 : 200
-
       res.status(statusCode).json(user)
     } catch (error) {
-      if (error instanceof Error && error.message === 'telegramId is required') {
-        res.status(400).json({ error: error.message })
-        return
-      }
-
       res.status(500).json({ error: 'Failed to create user' })
     }
   }
