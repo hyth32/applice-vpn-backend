@@ -1,15 +1,14 @@
-import { Request, Response } from 'express'
+import { Response } from 'express'
 import { UserService } from '../services/user.service'
-import { CreateUserDto } from '../requests/user.request'
+import { createUserSchema } from '../requests/user.request'
+import { ValidatedRequest } from '../middlewares/validate'
 
 const userService = new UserService()
 
 export class UserController {
-  async create(req: Request, res: Response) {
-    const data = req.body as CreateUserDto
-
+  async create(req: ValidatedRequest<typeof createUserSchema>, res: Response) {
     try {
-      const { user, created } = await userService.create(data)
+      const { user, created } = await userService.create(req.body)
       const statusCode = created ? 201 : 200
 
       res.status(statusCode).json(user)

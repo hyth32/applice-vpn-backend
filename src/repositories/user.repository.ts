@@ -1,19 +1,10 @@
 import { prisma } from '../lib/prisma'
-
-type UserPayload = {
-  name?: string | null
-  telegramId?: string | null
-  username?: string | null
-}
+import { CreateUserDto } from '../requests/user.request'
 
 export class UserRepository {
-  async store({ name, telegramId, username }: UserPayload) {
+  async store(payload: CreateUserDto) {
     return prisma.user.create({
-      data: {
-        name,
-        telegramId,
-        username,
-      },
+      data: payload,
     })
   }
 
