@@ -7,12 +7,8 @@ const userService = new UserService()
 
 export class UserController {
   async create(req: ValidatedRequest<typeof createUserSchema>, res: Response) {
-    try {
-      const { user, created } = await userService.create(req.body)
-      const statusCode = created ? 201 : 200
-      res.status(statusCode).json(user)
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to create user' })
-    }
+    const { user, created } = await userService.create(req.body)
+    const statusCode = created ? 201 : 200
+    res.status(statusCode).json(user)
   }
 }
