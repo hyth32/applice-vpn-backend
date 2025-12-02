@@ -6,7 +6,7 @@ model Order {
   regionId  Int
   period    Period    @relation(fields: [periodId], references: [id])
   periodId  Int
-  amount    String
+  amount    Float
   currency  String    @default("RUB")
   test      Boolean   @default(false)
   paid      Boolean   @default(false)
