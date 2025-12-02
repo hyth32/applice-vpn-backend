@@ -7,7 +7,7 @@ import { listPricesQuerySchema } from '../requests/price.request'
 const priceService = new PriceService()
 
 export class PriceController {
-  async list(req: ValidatedRequest<z.ZodTypeAny, typeof listPricesQuerySchema>, _res: any, next: NextFunction) {
+  async list(req: ValidatedRequest<unknown, z.infer<typeof listPricesQuerySchema>>, _res: any, next: NextFunction) {
     try {
       const prices = await priceService.list(req.validated.query.regionId, req.validated.query.periodId)
       next({ success: true, data: prices })

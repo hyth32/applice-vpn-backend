@@ -7,7 +7,7 @@ import { listPeriodsQuerySchema } from '../requests/period.request'
 const periodService = new PeriodService()
 
 export class PeriodController {
-  async list(req: ValidatedRequest<z.ZodTypeAny, typeof listPeriodsQuerySchema>, _res: any, next: NextFunction) {
+  async list(req: ValidatedRequest<unknown, z.infer<typeof listPeriodsQuerySchema>>, _res: any, next: NextFunction) {
     try {
       const periods = await periodService.list(req.validated.query.telegramId)
       next({ success: true, data: periods })

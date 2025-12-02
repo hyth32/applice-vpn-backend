@@ -4,15 +4,11 @@ import { HttpError } from '../lib/errors/http-error'
 
 type Location = 'body' | 'query' | 'params'
 
-export type ValidatedRequest<
-  ParamsSchema extends z.ZodTypeAny = z.ZodTypeAny,
-  QuerySchema extends z.ZodTypeAny = z.ZodTypeAny,
-  BodySchema extends z.ZodTypeAny = z.ZodTypeAny,
-> = Request<z.infer<ParamsSchema>, any, z.infer<BodySchema>, z.infer<QuerySchema>> & {
+export type ValidatedRequest<P = any, Q = any, B = any> = Request & {
   validated: {
-    params: z.infer<ParamsSchema>
-    query: z.infer<QuerySchema>
-    body: z.infer<BodySchema>
+    params: P
+    query: Q
+    body: B
   }
 }
 

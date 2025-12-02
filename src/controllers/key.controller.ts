@@ -21,7 +21,7 @@ export class KeyController {
     }
   }
 
-  async list(req: ValidatedRequest<z.ZodTypeAny, typeof listKeysQuerySchema>, _res: any, next: NextFunction) {
+  async list(req: ValidatedRequest<unknown, z.infer<typeof listKeysQuerySchema>>, _res: any, next: NextFunction) {
     try {
       const user = await userRepository.findByTelegramIdOrThrow(req.validated.query.telegramId)
       const keys = await keyRepository.listByUserId(user.id)
@@ -31,7 +31,7 @@ export class KeyController {
     }
   }
 
-  async createKey(req: ValidatedRequest<z.ZodTypeAny, z.ZodTypeAny, typeof createKeySchema>, _res: any, next: NextFunction) {
+  async createKey(req: ValidatedRequest<unknown, unknown, z.infer<typeof createKeySchema>>, _res: any, next: NextFunction) {
     try {
       const { key, created } = await keyService.create(req.validated.body)
       next({ success: true, data: key, statusCode: created ? 201 : 200 })
@@ -40,7 +40,11 @@ export class KeyController {
     }
   }
 
-  async showKey(req: ValidatedRequest<typeof showKeyParamsSchema, typeof showKeyQuerySchema>, _res: any, next: NextFunction) {
+  async showKey(
+    req: ValidatedRequest<z.infer<typeof showKeyParamsSchema>, z.infer<typeof showKeyQuerySchema>>,
+    _res: any,
+    next: NextFunction,
+  ) {
     try {
       const { telegramId } = req.validated.query
       const keyId = req.validated.params.keyId
