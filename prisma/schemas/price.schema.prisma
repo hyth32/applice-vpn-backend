@@ -4,7 +4,7 @@ model Price {
   regionId  Int
   period    Period   @relation(fields: [periodId], references: [id])
   periodId  Int
-  keyCount  Int
+  quantity  Int
   amount    Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
