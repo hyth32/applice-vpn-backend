@@ -10,4 +10,11 @@ export class PeriodRepository {
     }
     return period
   }
+
+  async findMany(): Promise<Array<Pick<Period, 'id' | 'name' | 'discount'>>> {
+    return prisma.period.findMany({
+      select: { id: true, name: true, discount: true },
+      orderBy: { id: 'asc' },
+    })
+  }
 }
