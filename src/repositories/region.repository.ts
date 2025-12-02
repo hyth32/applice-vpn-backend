@@ -10,4 +10,11 @@ export class RegionRepository {
     }
     return region
   }
+
+  async findMany(): Promise<Array<Pick<Region, 'id' | 'name'>>> {
+    return prisma.region.findMany({
+      select: { id: true, name: true },
+      orderBy: { name: 'asc' },
+    })
+  }
 }
