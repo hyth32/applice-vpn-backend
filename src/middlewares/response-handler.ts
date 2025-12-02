@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { HttpError } from '../lib/errors/http-error'
 
 type ResponsePayload =
   | {
@@ -25,8 +26,18 @@ export function responseHandler(payload: unknown, _req: Request, res: Response, 
     return
   }
 
-  const statusCode = typeof (payload as any)?.statusCode === 'number' ? (payload as any).statusCode : 500
-  const message = (payload as any)?.message && typeof (payload as any).message === 'string' ? (payload as any).message : 'Internal Server Error'
+  const statusCode =
+    payload instanceof HttpError
+      ? payload.statusCode
+      : typeof (payload as any)?.statusCode === 'number'
+        ? (payload as any).statusCode
+        : 500
+  const message =
+    payload instanceof HttpError
+      ? payload.message
+      : (payload as any)?.message && typeof (payload as any).message === 'string'
+        ? (payload as any).message
+        : 'Internal Server Error'
 
   res.status(statusCode).json({ success: false, message })
 }

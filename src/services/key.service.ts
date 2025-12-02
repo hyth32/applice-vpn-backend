@@ -1,7 +1,7 @@
+import { Key } from '@prisma/client'
 import { WireguardService } from './wireguard.service'
 import { UserRepository } from '../repositories/user.repository'
 import { KeyRepository } from '../repositories/key.repository'
-import { Key } from '@prisma/client'
 import { CreateKeyDto } from '../requests/key.request'
 import { OrderRepository } from '../repositories/order.repository'
 import { StoreOrderDto } from '../dtos/order.dto'
