@@ -46,4 +46,8 @@ export class KeyService {
     })
     return { key, created: true }
   }
+
+  async show(keyId: number) {
+    return await keyRepository.findByIdOrThrow(keyId)
+  }
 }

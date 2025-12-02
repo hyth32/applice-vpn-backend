@@ -11,4 +11,20 @@ export const keyExtension = (client: PrismaClient) => ({
       },
     },
   },
+  result: {
+    key: {
+      isExpired: {
+        needs: { expirationDate: true },
+        compute({ expirationDate }: { expirationDate: Date }) {
+          const today = new Date()
+          const expiration = new Date(expirationDate)
+
+          today.setHours(0, 0, 0, 0)
+          expiration.setHours(0, 0, 0, 0)
+
+          return today > expiration
+        },
+      },
+    },
+  },
 })
