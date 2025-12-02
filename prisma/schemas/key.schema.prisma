@@ -4,7 +4,7 @@ model Key {
   userId         Int
   order          Order     @relation(fields: [orderId], references: [id])
   orderId        Int
-  free           Boolean?
+  free           Boolean   @default(false)
   region         Region    @relation(fields: [regionId], references: [id])
   regionId       Int
   period         Period    @relation(fields: [periodId], references: [id])
