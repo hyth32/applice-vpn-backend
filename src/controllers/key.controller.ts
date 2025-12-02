@@ -1,7 +1,8 @@
-import { NextFunction, Request } from 'express'
+import { NextFunction } from 'express'
+import { z } from 'zod'
 import { KeyService } from '../services/key.service'
 import { ValidatedRequest } from '../middlewares/validate'
-import { createKeySchema } from '../requests/key.request'
+import { createKeySchema, listKeysQuerySchema, showKeyParamsSchema, showKeyQuerySchema } from '../requests/key.request'
 import { HttpError } from '../lib/errors/http-error'
 import { UserRepository } from '../repositories/user.repository'
 import { KeyRepository } from '../repositories/key.repository'
@@ -20,13 +21,9 @@ export class KeyController {
     }
   }
 
-  async list(req: Request, _res: any, next: NextFunction) {
+  async list(req: ValidatedRequest<z.ZodTypeAny, typeof listKeysQuerySchema>, _res: any, next: NextFunction) {
     try {
-      const telegramId = typeof req.query.telegramId === 'string' ? req.query.telegramId : null
-      if (!telegramId) {
-        throw new HttpError('telegramId is required', 400)
-      }
-      const user = await userRepository.findByTelegramIdOrThrow(telegramId)
+      const user = await userRepository.findByTelegramIdOrThrow(req.validated.query.telegramId)
       const keys = await keyRepository.listByUserId(user.id)
       next({ success: true, data: keys })
     } catch (error) {
@@ -34,30 +31,22 @@ export class KeyController {
     }
   }
 
-  async createKey(req: ValidatedRequest<typeof createKeySchema>, _res: any, next: NextFunction) {
+  async createKey(req: ValidatedRequest<z.ZodTypeAny, z.ZodTypeAny, typeof createKeySchema>, _res: any, next: NextFunction) {
     try {
-      const { key, created } = await keyService.create(req.body)
+      const { key, created } = await keyService.create(req.validated.body)
       next({ success: true, data: key, statusCode: created ? 201 : 200 })
     } catch (error) {
       next(error)
     }
   }
 
-  async showKey(req: Request, _res: any, next: NextFunction) {
+  async showKey(req: ValidatedRequest<typeof showKeyParamsSchema, typeof showKeyQuerySchema>, _res: any, next: NextFunction) {
     try {
-      const telegramId = typeof req.query.telegramId === 'string' ? req.query.telegramId : null
-      const keyId = Number(req.params.keyId)
-
-      if (!telegramId) {
-        throw new HttpError('telegramId is required', 400)
-      }
-      if (!Number.isFinite(keyId)) {
-        throw new HttpError('keyId is required', 400)
-      }
+      const { telegramId } = req.validated.query
+      const keyId = req.validated.params.keyId
 
       await this.checkAccess(telegramId, keyId)
-      const key = await keyRepository.findByIdOrThrow(keyId)
-
+      const key = await keyService.show(keyId)
       next({ success: true, data: key })
     } catch (error) {
       next(error)

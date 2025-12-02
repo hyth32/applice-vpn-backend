@@ -1,19 +1,15 @@
-import { NextFunction, Request } from 'express'
+import { NextFunction } from 'express'
+import { z } from 'zod'
 import { PeriodService } from '../services/period.service'
-import { HttpError } from '../lib/errors/http-error'
+import { ValidatedRequest } from '../middlewares/validate'
+import { listPeriodsQuerySchema } from '../requests/period.request'
 
 const periodService = new PeriodService()
 
 export class PeriodController {
-  async list(req: Request, _res: any, next: NextFunction) {
+  async list(req: ValidatedRequest<z.ZodTypeAny, typeof listPeriodsQuerySchema>, _res: any, next: NextFunction) {
     try {
-      const telegramId = typeof req.query.telegramId === 'string' ? req.query.telegramId : null
-
-      if (!telegramId) {
-        throw new HttpError('telegramId is required', 400)
-      }
-
-      const periods = await periodService.list(telegramId)
+      const periods = await periodService.list(req.validated.query.telegramId)
       next({ success: true, data: periods })
     } catch (error) {
       next(error)

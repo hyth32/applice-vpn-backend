@@ -1,19 +1,39 @@
 import { NextFunction, Request, Response } from 'express'
 import { z } from 'zod'
+import { HttpError } from '../lib/errors/http-error'
 
-export type ValidatedRequest<T extends z.ZodTypeAny> = Request<unknown, unknown, z.infer<T>>
+type Location = 'body' | 'query' | 'params'
+
+export type ValidatedRequest<
+  ParamsSchema extends z.ZodTypeAny = z.ZodTypeAny,
+  QuerySchema extends z.ZodTypeAny = z.ZodTypeAny,
+  BodySchema extends z.ZodTypeAny = z.ZodTypeAny,
+> = Request<z.infer<ParamsSchema>, any, z.infer<BodySchema>, z.infer<QuerySchema>> & {
+  validated: {
+    params: z.infer<ParamsSchema>
+    query: z.infer<QuerySchema>
+    body: z.infer<BodySchema>
+  }
+}
 
 export const validate =
-  <T extends z.ZodTypeAny>(schema: T) =>
-  (req: Request, res: Response, next: NextFunction) => {
-    const result = schema.safeParse(req.body)
+  <T extends z.ZodTypeAny, L extends Location = 'body'>(schema: T, location: L = 'body' as L) =>
+  (req: Request, _res: Response, next: NextFunction) => {
+    const data = (req as any)[location]
+    const result = schema.safeParse(data)
 
     if (!result.success) {
       const messages = result.error.issues.map((err) => err.message)
-      res.status(400).json({ success: false, message: messages.join(', ') })
-      return
+      return next(new HttpError(messages.join(', '), 400))
     }
 
-    ;(req as ValidatedRequest<T>).body = result.data
-    next()
+    const current = (req as any)[location]
+    if (current && typeof current === 'object') {
+      Object.assign(current, result.data)
+    }
+
+    const validated = ((req as any).validated ||= { params: {}, query: {}, body: {} })
+    validated[location] = result.data
+
+    return next()
   }

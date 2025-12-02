@@ -1,18 +1,16 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request } from 'express'
 import { HealthService } from '../services/health.service'
+import { HttpError } from '../lib/errors/http-error'
 
 const healthService = new HealthService()
 
 export class HealthController {
-  async health(_req: Request, res: Response) {
+  async health(_req: Request, _res: any, next: NextFunction) {
     try {
       await healthService.check()
-      res.json({ status: 'ok' })
+      next({ success: true, data: { status: 'ok' } })
     } catch (error) {
-      res.status(500).json({
-        status: 'error',
-        error: 'Database unreachable',
-      })
+      next(new HttpError('Database unreachable', 500))
     }
   }
 }

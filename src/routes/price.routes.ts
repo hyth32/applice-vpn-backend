@@ -1,9 +1,15 @@
-import { Router } from 'express'
+import { Router, RequestHandler } from 'express'
 import { PriceController } from '../controllers/price.controller'
+import { validate } from '../middlewares/validate'
+import { listPricesQuerySchema } from '../requests/price.request'
 
 const router = Router()
 const controller = new PriceController()
 
-router.get('/prices', controller.list.bind(controller))
+router.get(
+  '/prices',
+  validate(listPricesQuerySchema, 'query'),
+  controller.list.bind(controller) as unknown as RequestHandler,
+)
 
 export default router

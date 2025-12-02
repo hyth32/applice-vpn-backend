@@ -7,7 +7,7 @@ const regionRepository = new RegionRepository()
 const periodRepository = new PeriodRepository()
 
 export class PriceService {
-  async list(regionId: number, periodId: number): Promise<Array<{ quantity: number; amount: number }>> {
+  async list(regionId: number, periodId: number): Promise<Array<{ quantity: number; price: number }>> {
     await regionRepository.findByIdOrThrow(regionId)
     await periodRepository.findByIdOrThrow(periodId)
 

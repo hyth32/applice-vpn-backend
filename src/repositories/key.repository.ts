@@ -9,9 +9,9 @@ export class KeyRepository {
 
   async findByIdOrThrow(
     id: number
-  ): Promise<{ id: number; configName: string; expirationDate: string; regionName: string; expired: boolean; free: boolean }> {
-    const key = await prisma.key.findUnique({
-      where: { id },
+  ): Promise<{ id: number; configName: string; expirationDate: string; regionName: string; isExpired: boolean; free: boolean }> {
+    const key = await prisma.key.findFirst({
+      where: { id, deletedAt: null },
       select: { id: true, configName: true, expirationDate: true, free: true, region: { select: { name: true } }, isExpired: true },
     })
     if (!key) {
@@ -22,7 +22,7 @@ export class KeyRepository {
       configName: key.configName,
       regionName: key.region.name,
       expirationDate: key.expirationDate.toISOString(),
-      expired: key.isExpired,
+      isExpired: key.isExpired,
       free: key.free,
     }
   }
