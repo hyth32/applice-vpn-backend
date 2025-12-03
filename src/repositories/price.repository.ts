@@ -10,4 +10,11 @@ export class PriceRepository {
 
     return prices.map(({ amount, quantity }) => ({ quantity, price: amount }))
   }
+
+  async findByRegionPeriodAndQuantity(regionId: number, periodId: number, quantity: number) {
+    return prisma.price.findFirst({
+      where: { regionId, periodId, quantity },
+      include: { region: true, period: true },
+    })
+  }
 }

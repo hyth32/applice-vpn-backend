@@ -1,5 +1,5 @@
 import { NextFunction } from 'express'
-import { success, z } from 'zod'
+import { z } from 'zod'
 import { KeyService } from '../services/key.service'
 import { ValidatedRequest } from '../middlewares/validate'
 import { createKeySchema, listKeysQuerySchema, showKeyParamsSchema, showKeyQuerySchema } from '../requests/key.request'
@@ -33,8 +33,8 @@ export class KeyController {
 
   async createKey(req: ValidatedRequest<unknown, unknown, z.infer<typeof createKeySchema>>, _res: any, next: NextFunction) {
     try {
-      const { key, created } = await keyService.create(req.validated.body)
-      next({ success: true, data: key, statusCode: created ? 201 : 200 })
+      const payload = await keyService.create(req.validated.body)
+      next({ success: true, data: payload, statusCode: 201 })
     } catch (error) {
       next(error)
     }
