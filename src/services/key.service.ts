@@ -50,4 +50,9 @@ export class KeyService {
   async show(keyId: number) {
     return await keyRepository.findByIdOrThrow(keyId)
   }
+
+  async getConfig(keyId: number) {
+    const configId = await keyRepository.getConfigId(keyId)
+    return await wireguardService.getPeer(configId)
+  }
 }

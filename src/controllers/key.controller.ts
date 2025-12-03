@@ -40,11 +40,7 @@ export class KeyController {
     }
   }
 
-  async showKey(
-    req: ValidatedRequest<z.infer<typeof showKeyParamsSchema>, z.infer<typeof showKeyQuerySchema>>,
-    _res: any,
-    next: NextFunction,
-  ) {
+  async showKey(req: ValidatedRequest<z.infer<typeof showKeyParamsSchema>, z.infer<typeof showKeyQuerySchema>>, _res: any, next: NextFunction) {
     try {
       const { telegramId } = req.validated.query
       const keyId = req.validated.params.keyId
@@ -52,6 +48,19 @@ export class KeyController {
       await this.checkAccess(telegramId, keyId)
       const key = await keyService.show(keyId)
       next({ success: true, data: key })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getConfig(req: ValidatedRequest<z.infer<typeof showKeyParamsSchema>, z.infer<typeof listKeysQuerySchema>>, _res: any, next: NextFunction) {
+    try {
+      const { telegramId } = req.validated.query
+      const keyId = req.validated.params.keyId
+
+      await this.checkAccess(telegramId, keyId)
+      const config = await keyService.getConfig(keyId)
+      next({ success: true, data: config })
     } catch (error) {
       next(error)
     }

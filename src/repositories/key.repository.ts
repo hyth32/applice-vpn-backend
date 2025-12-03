@@ -7,6 +7,17 @@ export class KeyRepository {
     return prisma.key.create({ data: payload })
   }
 
+  async getConfigId(id: number): Promise<string> {
+    const key = await prisma.key.findFirst({
+      where: { id, deletedAt: null },
+      select: { configId: true },
+    })
+    if (!key) {
+      throw new HttpError('Key not found', 404)
+    }
+    return key.configId
+  }
+
   async findByIdOrThrow(
     id: number
   ): Promise<{ id: number; configName: string; expirationDate: string; regionName: string; isExpired: boolean; free: boolean }> {

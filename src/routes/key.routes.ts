@@ -14,5 +14,11 @@ router.get(
   controller.showKey.bind(controller) as unknown as RequestHandler
 )
 router.post('/keys/buy', validate(createKeySchema), controller.createKey.bind(controller) as unknown as RequestHandler)
+router.get(
+  '/keys/:keyId/config',
+  validate(showKeyParamsSchema, 'params'),
+  validate(listKeysQuerySchema, 'query'),
+  controller.getConfig.bind(controller) as unknown as RequestHandler
+)
 
 export default router
