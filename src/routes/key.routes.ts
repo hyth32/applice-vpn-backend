@@ -1,7 +1,13 @@
 import { Router, RequestHandler } from 'express'
 import { KeyController } from '../controllers/key.controller'
 import { validate } from '../middlewares/validate'
-import { createKeySchema, listKeysQuerySchema, showKeyParamsSchema, showKeyQuerySchema } from '../requests/key.request'
+import {
+  createKeySchema,
+  freeKeyQuerySchema,
+  listKeysQuerySchema,
+  showKeyParamsSchema,
+  showKeyQuerySchema,
+} from '../requests/key.request'
 
 const router = Router()
 const controller = new KeyController()
@@ -14,6 +20,7 @@ router.get(
   controller.showKey.bind(controller) as unknown as RequestHandler
 )
 router.post('/keys/buy', validate(createKeySchema), controller.createKey.bind(controller) as unknown as RequestHandler)
+router.post('/keys/free', validate(freeKeyQuerySchema, 'query'), controller.createFreeKey.bind(controller) as unknown as RequestHandler)
 router.get(
   '/keys/:keyId/config',
   validate(showKeyParamsSchema, 'params'),

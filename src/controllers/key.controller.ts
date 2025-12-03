@@ -2,7 +2,13 @@ import { NextFunction } from 'express'
 import { z } from 'zod'
 import { KeyService } from '../services/key.service'
 import { ValidatedRequest } from '../middlewares/validate'
-import { createKeySchema, listKeysQuerySchema, showKeyParamsSchema, showKeyQuerySchema } from '../requests/key.request'
+import {
+  createKeySchema,
+  freeKeyQuerySchema,
+  listKeysQuerySchema,
+  showKeyParamsSchema,
+  showKeyQuerySchema,
+} from '../requests/key.request'
 import { HttpError } from '../lib/errors/http-error'
 import { UserRepository } from '../repositories/user.repository'
 import { KeyRepository } from '../repositories/key.repository'
@@ -35,6 +41,15 @@ export class KeyController {
     try {
       const payload = await keyService.create(req.validated.body)
       next({ success: true, data: payload, statusCode: 201 })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async createFreeKey(req: ValidatedRequest<unknown, z.infer<typeof freeKeyQuerySchema>>, _res: any, next: NextFunction) {
+    try {
+      await keyService.createFree(req.validated.query)
+      next({ success: true, data: [], statusCode: 201 })
     } catch (error) {
       next(error)
     }

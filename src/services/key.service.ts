@@ -10,6 +10,7 @@ import { PriceRepository } from '../repositories/price.repository'
 import { HttpError } from '../lib/errors/http-error'
 import { PaymentRepository } from '../repositories/payment.repository'
 import { YookassaService } from './yookassa.service'
+import { CreateFreeKeyDto } from '../requests/key.request'
 
 const wireguardService = new WireguardService()
 const userRepository = new UserRepository()
@@ -86,6 +87,42 @@ export class KeyService {
       amount: price.amount,
       payment_link: paymentLink,
     }
+  }
+
+  async createFree(payload: CreateFreeKeyDto): Promise<void> {
+    const user = await userRepository.findByTelegramIdOrThrow(payload.telegramId)
+    const region = await regionRepository.findByIdOrThrow(payload.regionId)
+    const period = await periodRepository.findByNameOrThrow('free')
+
+    const alreadyHasFreeKey = await userRepository.freeKeyReceived(user.id)
+    if (alreadyHasFreeKey) {
+      throw new HttpError('Free key already received', 400)
+    }
+
+    const orderPayload: StoreOrderDto = {
+      userId: user.id,
+      regionId: region.id,
+      periodId: period.id,
+      amount: 0,
+      currency: DEFAULT_CURRENCY,
+      paid: true,
+    }
+
+    const order = await orderRepository.store(orderPayload)
+
+    const displayName = user.username ?? user.name ?? payload.telegramId
+    const config = await wireguardService.createPeer(displayName)
+
+    await keyRepository.store({
+      userId: user.id,
+      orderId: order.id,
+      regionId: region.id,
+      periodId: period.id,
+      free: true,
+      configId: config.Identifier,
+      configName: config.DisplayName,
+      expirationDate: new Date(config.ExpiresAt),
+    })
   }
 
   async show(keyId: number) {

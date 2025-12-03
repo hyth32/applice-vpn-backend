@@ -21,4 +21,8 @@ export class UserRepository {
     }
     return user
   }
+
+  async freeKeyReceived(userId: number): Promise<boolean> {
+    return prisma.user.freeKeyReceived({ id: userId })
+  }
 }

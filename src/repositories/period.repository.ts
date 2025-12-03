@@ -17,4 +17,12 @@ export class PeriodRepository {
       orderBy: { id: 'asc' },
     })
   }
+
+  async findByNameOrThrow(name: string): Promise<Period> {
+    const period = await prisma.period.findFirst({ where: { name } })
+    if (!period) {
+      throw new HttpError('Period not found', 404)
+    }
+    return period
+  }
 }

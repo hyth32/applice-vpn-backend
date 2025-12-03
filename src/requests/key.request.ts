@@ -7,6 +7,11 @@ export const createKeySchema = z.object({
   quantity: z.coerce.number().int().positive().default(1),
 })
 
+export const freeKeyQuerySchema = z.object({
+  telegramId: z.string().nonempty(),
+  regionId: z.coerce.number().int().positive(),
+})
+
 export const listKeysQuerySchema = z.object({
   telegramId: z.string().nonempty(),
 })
@@ -20,3 +25,4 @@ export const showKeyQuerySchema = z.object({
 })
 
 export type CreateKeyDto = z.infer<typeof createKeySchema>
+export type CreateFreeKeyDto = z.infer<typeof freeKeyQuerySchema>
