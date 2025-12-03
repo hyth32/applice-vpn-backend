@@ -1,5 +1,5 @@
 import { NextFunction } from 'express'
-import { z } from 'zod'
+import { success, z } from 'zod'
 import { KeyService } from '../services/key.service'
 import { ValidatedRequest } from '../middlewares/validate'
 import { createKeySchema, listKeysQuerySchema, showKeyParamsSchema, showKeyQuerySchema } from '../requests/key.request'
@@ -61,6 +61,19 @@ export class KeyController {
       await this.checkAccess(telegramId, keyId)
       const config = await keyService.getConfig(keyId)
       next({ success: true, data: config })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async deleteKey(req: ValidatedRequest<z.infer<typeof showKeyParamsSchema>, z.infer<typeof listKeysQuerySchema>>, _res: any, next: NextFunction) {
+    try {
+      const { telegramId } = req.validated.query
+      const keyId = req.validated.params.keyId
+
+      await this.checkAccess(telegramId, keyId)
+      await keyService.deleteKey(keyId)
+      next({ success: true, data: [] })
     } catch (error) {
       next(error)
     }

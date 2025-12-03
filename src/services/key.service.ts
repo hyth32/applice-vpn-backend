@@ -55,4 +55,14 @@ export class KeyService {
     const configId = await keyRepository.getConfigId(keyId)
     return await wireguardService.getPeer(configId)
   }
+
+  async deleteKey(keyId: number) {
+    const configId = await keyRepository.getConfigId(keyId)
+    await keyRepository.deleteKey(keyId)
+    try {
+      await wireguardService.deletePeer(configId)
+    } catch (error) {
+      return
+    }
+  }
 }

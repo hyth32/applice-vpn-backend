@@ -63,4 +63,8 @@ export class KeyRepository {
       regionName: key.region.name,
     }))
   }
+
+  async deleteKey(id: number): Promise<Key> {
+    return await prisma.key.delete({ where: { id } })
+  }
 }
